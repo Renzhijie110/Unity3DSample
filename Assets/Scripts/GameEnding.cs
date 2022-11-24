@@ -16,15 +16,18 @@ public class GameEnding : MonoBehaviour
     public CanvasGroup exitBackgroundImageCanvasGroup;
     public CanvasGroup CaughtBackgroundImageCanvasGroup;
 
+    public AudioSource exitAudio;
+    public AudioSource caughtAudit;
+    bool m_HasAudioPlayed;
     // Update is called once per frame
     void Update()
     {
         if(m_IsPlayerAtExit)
         {
-            EndLevel(exitBackgroundImageCanvasGroup, false);
+            EndLevel(exitBackgroundImageCanvasGroup, false, exitAudio);
         }else if(m_IsPlayerCaught)
         {
-            EndLevel(CaughtBackgroundImageCanvasGroup, true);
+            EndLevel(CaughtBackgroundImageCanvasGroup, true, caughtAudit);
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -34,8 +37,13 @@ public class GameEnding : MonoBehaviour
             m_IsPlayerAtExit = true;
         }
     }
-    void EndLevel(CanvasGroup imageCanvasGroup, bool doRestart)
+    void EndLevel(CanvasGroup imageCanvasGroup, bool doRestart, AudioSource audioSource)
     {
+        if(!m_HasAudioPlayed)
+        {
+            audioSource.Play();
+            m_HasAudioPlayed = true;
+        }
         m_Timer += Time.deltaTime;
         imageCanvasGroup.alpha = m_Timer/fadeDuration;
         if(m_Timer > fadeDuration + displayImageDuration)
